@@ -6,7 +6,7 @@ dependencies:
   badgeteam/custom-certificates:
     version: '>=1.0.0'
   nicolaielectronics/wifi-manager:
-    version: '>=0.1.1'
+    version: '>=0.1.2'
   nicolaielectronics/esp-wifi-remote-tanmatsu:
     version: '>=0.0.1'
     rules:
