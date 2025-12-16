@@ -41,13 +41,14 @@ static esp_err_t wifi_remote_verify_radio_ready(void) {
     return res;
 }
 
-esp_err_t transport_reset_callback(void* bus_handle) {
-    ESP_LOGW(TAG, "Switching radio off...\r\n");
+esp_err_t hosted_sdio_reset_slave_callback(void) {
+    ESP_LOGW(TAG, "Switching radio off...");
     bsp_power_set_radio_state(BSP_POWER_RADIO_STATE_OFF);
-    vTaskDelay(pdMS_TO_TICKS(50));
-    ESP_LOGW(TAG, "Switching radio to application mode...\r\n");
+    vTaskDelay(pdMS_TO_TICKS(500));
+    ESP_LOGW(TAG, "Switching radio to application mode...");
     bsp_power_set_radio_state(BSP_POWER_RADIO_STATE_APPLICATION);
-    vTaskDelay(pdMS_TO_TICKS(3000));
+    ESP_LOGW(TAG, "Waiting for radio to start...");
+    vTaskDelay(pdMS_TO_TICKS(1200));
     return ESP_OK;
 }
 
@@ -55,10 +56,10 @@ esp_err_t wifi_remote_initialize(void) {
     if (initialized) {
         return ESP_OK;
     }
-    ESP_LOGW(TAG, "Testing connection to radio...\r\n");
+    /*ESP_LOGW(TAG, "Testing connection to radio...\r\n");
     if (wifi_remote_verify_radio_ready() != ESP_OK) {
         return ESP_ERR_INVALID_STATE;
-    }
+    }*/
     ESP_LOGW(TAG, "Starting ESP hosted...\r\n");
     esp_hosted_init();
     initialized = true;
