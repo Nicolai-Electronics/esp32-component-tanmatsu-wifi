@@ -48,9 +48,14 @@ esp_err_t wifi_remote_initialize(void) {
 
 #elif defined(CONFIG_IDF_TARGET_ESP32P4)
 /// Generic implementation for ESP32-P4 targets
-
+#include <string.h>
 #include "esp_err.h"
-#include "esp_hosted_custom.h"
+#include "esp_hosted.h"
+#include "esp_hosted_transport_config.h"
+#include "esp_log.h"
+#include "sdkconfig.h"
+
+static const char* TAG = "WiFi remote";
 
 esp_err_t wifi_remote_initialize(void) {
     if (initialized) {
