@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 Nicolai Electronics
+// SPDX-FileCopyrightText: 2026 Nicolai Electronics
 // SPDX-License-Identifier: MIT
 
 #include <stdbool.h>
@@ -11,8 +11,7 @@ bool wifi_remote_get_initialized(void) {
     return initialized;
 }
 
-#if defined(CONFIG_BSP_TARGET_TANMATSU) || defined(CONFIG_BSP_TARGET_KONSOOL) || \
-    defined(CONFIG_BSP_TARGET_HACKERHOTEL_2026)
+#if defined(CONFIG_BSP_TARGET_TANMATSU) || defined(CONFIG_BSP_TARGET_KONSOOL)
 /// Implementation for Tanmatsu
 
 #include <string.h>
@@ -24,22 +23,6 @@ bool wifi_remote_get_initialized(void) {
 #include "sdkconfig.h"
 
 static const char* TAG = "WiFi remote";
-
-static esp_err_t wifi_remote_verify_radio_ready(void) {
-    if (esp_hosted_is_config_valid()) {
-        return ESP_OK;
-    }
-    ESP_LOGW(TAG, "Switching radio to application mode to verify radio ready...\r\n");
-    bsp_power_set_radio_state(BSP_POWER_RADIO_STATE_APPLICATION);
-    vTaskDelay(pdMS_TO_TICKS(3000));
-    esp_err_t res = esp_hosted_set_default_config();
-    if (res == ESP_OK) {
-        ESP_LOGI(TAG, "Radio ready");
-    } else {
-        ESP_LOGI(TAG, "Radio not ready");
-    }
-    return res;
-}
 
 esp_err_t hosted_sdio_reset_slave_callback(void) {
     ESP_LOGW(TAG, "Switching radio off...");
@@ -56,10 +39,7 @@ esp_err_t wifi_remote_initialize(void) {
     if (initialized) {
         return ESP_OK;
     }
-    /*ESP_LOGW(TAG, "Testing connection to radio...\r\n");
-    if (wifi_remote_verify_radio_ready() != ESP_OK) {
-        return ESP_ERR_INVALID_STATE;
-    }*/
+
     ESP_LOGW(TAG, "Starting ESP hosted...\r\n");
     esp_hosted_init();
     initialized = true;
@@ -76,7 +56,9 @@ esp_err_t wifi_remote_initialize(void) {
     if (initialized) {
         return ESP_OK;
     }
-    esp_hosted_host_init();
+
+    ESP_LOGW(TAG, "Starting ESP hosted...\r\n");
+    esp_hosted_init();
     initialized = true;
     return ESP_OK;
 }
