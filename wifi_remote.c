@@ -24,7 +24,7 @@ bool wifi_remote_get_initialized(void) {
 
 static const char* TAG = "WiFi remote";
 
-esp_err_t hosted_sdio_reset_slave_callback(void) {
+int hosted_reset_slave_callback(void) {
     ESP_LOGW(TAG, "Switching radio off...");
     bsp_power_set_radio_state(BSP_POWER_RADIO_STATE_OFF);
     vTaskDelay(pdMS_TO_TICKS(500));
@@ -32,7 +32,12 @@ esp_err_t hosted_sdio_reset_slave_callback(void) {
     bsp_power_set_radio_state(BSP_POWER_RADIO_STATE_APPLICATION);
     ESP_LOGW(TAG, "Waiting for radio to start...");
     vTaskDelay(pdMS_TO_TICKS(1200));
-    return ESP_OK;
+    return 0;
+}
+
+// For backwards compatibility with the previous versions of esp-hosted-tanmatsu
+esp_err_t hosted_sdio_reset_slave_callback(void) {
+    return (hosted_reset_slave_callback() == 0) ? ESP_OK : ESP_FAIL;
 }
 
 esp_err_t wifi_remote_initialize(void) {
